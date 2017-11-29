@@ -53,7 +53,7 @@ def inference_op(input_op, keep_prob):
 
 	conv4_1 = conv_op(pool3, name = 'conv4_1', kh = 3, kw = 3, n_out = 512, dh = 1, dw = 1, p=p)
 	conv4_2 = conv_op(conv4_1, name = 'conv4_2', kh = 3, kw = 3, n_out = 512, dh = 1, dw = 1, p=p)
-	conv4_3 = conv_op(pool3, name = 'conv4_3', kh = 3, kw = 3, n_out = 512, dh = 1, dw = 1, p=p)
+	conv4_3 = conv_op(conv4_2, name = 'conv4_3', kh = 3, kw = 3, n_out = 512, dh = 1, dw = 1, p=p)
 	pool4 = mpool_op(conv4_3, name = 'pool4', kh = 2, kw = 2, dh = 2, dw = 2)
 
 
@@ -98,7 +98,7 @@ def time_tensorflow_run(session, target, feed, info_string):
 
 def run_benchmark():
 	with tf.Graph().as_default():
-		image_size = 224
+		image_size = 32
 		images = tf.Variable( tf.random_normal([batch_size, image_size, image_size, 3], 
 			dtype=tf.float32, stddev = 1e-1) )
 		keep_prob = tf.placeholder(tf.float32)
@@ -108,7 +108,7 @@ def run_benchmark():
 		sess = tf.Session()
 		sess.run(init)
 
-		time_tensorflow_run(sess, prediction, {keep_prob:1.0}, "Forward")
+		#time_tensorflow_run(sess, prediction, {keep_prob:1.0}, "Forward")
 		objective = tf.nn.l2_loss(fc8)
 		grad = tf.gradients(objective, p)
 		time_tensorflow_run(sess, grad, {keep_prob:0.5}, "Forward-backward")
